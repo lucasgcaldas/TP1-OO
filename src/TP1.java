@@ -149,7 +149,7 @@ public class TP1 {
                 sc.nextLine();
                 String palavra = sc.nextLine().toUpperCase();
 
-                String[][] novoTemasPalavras = new String[51][51];
+                String[][] novoTemasPalavras = new String[temasPalavras.length][51];
 
                 for (int i = 0; i < temasPalavras[tema - 1].length; i++) {
                     if (Objects.equals(temasPalavras[tema - 1][i], palavra)) {
@@ -189,8 +189,78 @@ public class TP1 {
                 menu();
 
             case 'b':
+                System.out.println("Qual palavra deseja excluir?");
+                sc.nextLine();
+                palavra = sc.nextLine().toUpperCase();
+
+                int posI = 0, posJ = 0;
+
+                for (int i = 0; i < temasPalavras.length; i++) {
+                    for (int j = 0; j < temasPalavras[i].length; j++) {
+                        if (temasPalavras[i][j].equals(palavra)) {
+                            posI = i;
+                            posJ = j;
+                            break;
+                        }
+                    }
+                }
+
+                novoTemasPalavras = new String[temasPalavras.length][50];
+
+                for (int i = 0; i < temasPalavras.length; i++) {
+                    for (int j = 0; j < temasPalavras[i].length; j++) {
+                        if (posI == i) {
+                            if (posJ > j || posJ < j) {
+                                novoTemasPalavras[posI][j] = temasPalavras[posI][j];
+                            }
+                        } else {
+                            novoTemasPalavras[i][j] = temasPalavras[i][j];
+                        }
+                    }
+                }
+
+                temasPalavras = novoTemasPalavras;
+
+                for (String[] temasPalavra : temasPalavras) {
+                    System.out.println(Arrays.toString(temasPalavra));
+                }
+
+                menu();
             case 'c':
+                System.out.println("Qual palavra deseja buscar?");
+                sc.nextLine();
+                palavra = sc.nextLine().toUpperCase();
+
+                boolean achou = true;
+
+                for (int i = 0; i < temasPalavras.length; i++) {
+                    for (int j = 0; j < temasPalavras[i].length; j++) {
+                        if (temasPalavras[i][j].equals(palavra)) {
+                            posI = i;
+                            achou = true;
+                            System.out.println("Palavra encontrada no tema " + temasPalavras[posI][0]);
+                            break;
+                        } else {
+                            achou = false;
+                        }
+                    }
+                }
+
+                if (!achou) {
+                    System.out.println("Palavra não encontrada");
+                }
+
+                menu();
             case 'd':
+                System.out.println("Em qual tema deseja ver todas as palavras cadastrada?");
+                for (int i = 0; i < temasPalavras.length; i++) {
+                    System.out.println(i + 1 + ". " + temasPalavras[i][0]);
+                }
+                tema = sc.nextInt();
+
+                System.out.println(Arrays.toString(temasPalavras[tema -1]));
+
+                menu();
             default:
                 System.out.println("Opção Inválida");
                 menu();
