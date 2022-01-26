@@ -1,18 +1,20 @@
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class TP1 {
 
-    public static String[][] temasPalavras = {
-            {"ALIMENTO", "ARROZ", "PIZZA", "LASANHA", "CHURRASCO", "FEIJAO", "BATATA", "STROGONOFF", "SALADA", "MACARRAO", "SANDUICHE"},
-            {"CIDADE", "BRASILIA", "LUZIANIA", "GOIANIA", "ANAPOLIS", "VALPARAISO", "GAMA", "CRISTALINA", "FORMOSA", "SOBRADINHO", "PLANALTINA"},
-            {"ANIMAL", "CAVALO", "GATO", "CACHORRO", "ABELHA", "GALINHA", "PATO", "OVELHA", "SAPO", "URSO", "FOCA"},
-            {"COR", "AZUL", "BRANCO", "VERMELHO", "VERDE", "PRETO", "ROSA", "LARANJA", "MARROM", "CINZA", "ROXO"},
-            {"TESTE"},
-            {"NOME", "LUCAS", "BIANCA", "FELIPE", "SIMONE", "SIDNEY", "INGRID", "JOAO", "JENIFER", "RAFAEL", "LETICIA"}};
+    public static String[][] temasPalavras = new String[51][51];
 
     public static void main(String[] args) {
+        temasPalavras = new String[][]{
+                {"ALIMENTO", "ARROZ", "PIZZA", "LASANHA", "CHURRASCO", "FEIJAO", "BATATA", "STROGONOFF", "SALADA", "MACARRAO", "SANDUICHE"},
+                {"CIDADE", "BRASILIA", "LUZIANIA", "GOIANIA", "ANAPOLIS", "VALPARAISO", "GAMA", "CRISTALINA", "FORMOSA", "SOBRADINHO", "PLANALTINA"},
+                {"ANIMAL", "CAVALO", "GATO", "CACHORRO", "ABELHA", "GALINHA", "PATO", "OVELHA", "SAPO", "URSO", "FOCA"},
+                {"COR", "AZUL", "BRANCO", "VERMELHO", "VERDE", "PRETO", "ROSA", "LARANJA", "MARROM", "CINZA", "ROXO"},
+                {"TESTE"},
+                {"NOME", "LUCAS", "BIANCA", "FELIPE", "SIMONE", "SIDNEY", "INGRID", "JOAO", "JENIFER", "RAFAEL", "LETICIA"}};
 
         menu();
     }
@@ -131,6 +133,70 @@ public class TP1 {
         System.out.println("(b) Exclusão");
         System.out.println("(c) Busca");
         System.out.println("(d) Listagem");
+
+        Scanner sc = new Scanner(System.in);
+        char choose = sc.next().charAt(0);
+
+        switch (choose) {
+            case 'a':
+                System.out.println("Em qual tema deseja cadastrar uma palavra?");
+                for (int i = 0; i < temasPalavras.length; i++) {
+                    System.out.println(i + 1 + ". " + temasPalavras[i][0]);
+                }
+                int tema = sc.nextInt();
+
+                System.out.println("Qual palavra deseja cadastrar?");
+                sc.nextLine();
+                String palavra = sc.nextLine().toUpperCase();
+
+                String[][] novoTemasPalavras = new String[51][51];
+
+                for (int i = 0; i < temasPalavras[tema - 1].length; i++) {
+                    if (Objects.equals(temasPalavras[tema - 1][i], palavra)) {
+                        System.out.println("Essa palavra ja existe! Tente cadastrar outra palavra.");
+                        gerenciarPalavras();
+                    } else {
+                        for (int j = 0; j < temasPalavras.length; j++) {
+                            for (int k = 0; k < temasPalavras[j].length + 1; k++) {
+                                if (j == tema - 1 && k <= temasPalavras[tema - 1].length + 1) {
+                                    if (k < temasPalavras[j].length) {
+                                        novoTemasPalavras[j][k] = temasPalavras[tema - 1][k];
+                                    } else {
+                                        novoTemasPalavras[j][k] = palavra;
+                                    }
+                                } else {
+                                    if (k > temasPalavras[j].length && j == tema - 1) {
+                                        k--;
+                                        novoTemasPalavras[j][k] = temasPalavras[j][k];
+                                    } else if (k == temasPalavras[j].length) {
+                                        k--;
+                                        novoTemasPalavras[j][k] = temasPalavras[j][k];
+                                        break;
+                                    }
+                                    novoTemasPalavras[j][k] = temasPalavras[j][k];
+                                }
+                            }
+                        }
+                    }
+                }
+
+                temasPalavras = novoTemasPalavras;
+
+                for (String[] temasPalavra : temasPalavras) {
+                    System.out.println(Arrays.toString(temasPalavra));
+                }
+
+                menu();
+
+            case 'b':
+            case 'c':
+            case 'd':
+            default:
+                System.out.println("Opção Inválida");
+                menu();
+        }
+
+        sc.close();
     }
 
     public static void jogar() {
