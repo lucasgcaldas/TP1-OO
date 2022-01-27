@@ -1,7 +1,4 @@
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class TP1 {
 
@@ -16,7 +13,7 @@ public class TP1 {
     static Scanner sc = new Scanner(System.in);
     static boolean achouTema = true;
     static int tema = 0;
-    static String palavra = "";
+    static String palavra = null;
     static int posI = 0, posJ = 0;
     static char choose;
     static String checaTema = "";
@@ -90,10 +87,6 @@ public class TP1 {
                 }
             }
             temasPalavras = novoTemasPalavras;
-        }
-
-        for (String[] temasPalavra : temasPalavras) {
-            System.out.println(Arrays.toString(temasPalavra));
         }
     }
 
@@ -250,12 +243,7 @@ public class TP1 {
                 }
             }
         }
-
         temasPalavras = novoTemasPalavras;
-
-        for (String[] temasPalavra : temasPalavras) {
-            System.out.println(Arrays.toString(temasPalavra));
-        }
     }
 
     public static void buscaPalavra() {
@@ -295,52 +283,129 @@ public class TP1 {
 
     public static void jogar() {
         System.out.println("(a) Seleção de tema");
-//        System.out.println("(b) Jogo");
-        System.out.println("(b) Jogar novamente");
-        System.out.println("(c) Sair");
+        System.out.println("(b) Sair");
 
         choose = sc.next().charAt(0);
 
         switch (choose) {
-            case 'a': case 'b':
+            case 'a':
                 selecaoTemaJogar();
-                menu();
-            case 'c':
+            case 'b':
                 menu();
             default:
                 System.out.println("Opção Inválida");
                 menu();
         }
-
     }
 
-    public static void selecaoTemaJogar(){
+    public static void selecaoTemaJogar() {
         System.out.println("Qual tema deseja buscar a palavra?");
-        sc.nextLine();
-        checaTema = sc.nextLine().toUpperCase(Locale.ROOT);
+        for (int i = 0; i < temasPalavras.length; i++) {
+            System.out.println(i + 1 + ". " + temasPalavras[i][0]);
+        }
+        int tema = sc.nextInt() - 1;
 
-        achouTema = true;
+        if (tema >= temasPalavras.length) {
+            System.out.println("Tema inválido, tente novamente!");
+        } else {
+            jogoJogar(tema);
+        }
+    }
 
-        for (String[] temasPalavra : temasPalavras) {
-            if (checaTema.equals(temasPalavra[0])) {
-                System.out.println("Tema existente!");
-                System.out.println(Arrays.toString(temasPalavra));
-                achouTema = true;
-                jogoJogar(checaTema);
-            } else {
-                achouTema = false;
+    public static void jogoJogar(int tema) {
+        palavra = null;
+        while (palavra == null) {
+            Random random = new Random();
+            int numRandom = random.nextInt((temasPalavras[tema].length - 2) + 1) + 1;
+
+            palavra = temasPalavras[tema][numRandom];
+        }
+
+        boolean ganhou;
+        boolean perdeu;
+        int vida = 5;
+        char[] acertos = new char[palavra.length()];
+
+        for (int i = 0; i < acertos.length; i++) {
+            acertos[i] = 0;
+
+            if (palavra.charAt(i) == '-') {
+                acertos[i] = 1;
             }
         }
 
-        if (!achouTema) {
-            System.out.println("Tema não encontrado!");
-            jogar();
+        StringBuilder letrasUtilizadas = new StringBuilder();
+        char letra;
+
+        for (int i = 0; i < palavra.length(); i++) {
+            if (acertos[i] == 1) {
+                System.out.print(" - ");
+            } else {
+                System.out.print(" _ ");
+            }
         }
 
+        do {
+            ganhou = true;
+            perdeu = true;
+            System.out.println();
+            System.out.println("Total de vidas: " + vida);
+            System.out.println("Letras utilizadas: " + letrasUtilizadas);
+            System.out.println("Digite a letra");
+
+            letra = sc.next().toUpperCase().charAt(0);
+
+            while (letrasUtilizadas.toString().contains(String.valueOf(letra))) {
+                System.out.println("Letra ja digitada. Digite outra letra!");
+                letra = sc.next().toUpperCase().charAt(0);
+            }
+
+            letrasUtilizadas.append(" ").append(letra);
+
+            for (int i = 0; i < palavra.length(); i++) {
+                if (letra == palavra.charAt(i)) {
+                    acertos[i] = letra;
+                    perdeu = false;
+                }
+            }
+
+            if (perdeu) {
+                vida--;
+            }
+
+            for (int i = 0; i < palavra.length(); i++) {
+                if (acertos[i] == 0) {
+                    System.out.print(" _ ");
+                    ganhou = false;
+                } else {
+                    ganhou = true;
+                    System.out.print(" " + palavra.charAt(i) + " ");
+                }
+            }
+
+            System.out.println();
+        } while (!ganhou && vida > 0);
+
+        if (vida != 0) {
+            System.out.println("Parabéns! Você acertou a palavra! Deseja jogar novamente?");
+            jogarNovamente();
+        } else {
+            System.out.println("Você perdeu! Deseja Deseja jogar novamente?");
+            jogarNovamente();
+        }
     }
 
-    public static void jogoJogar(String checaTema){
+    public static void jogarNovamente() {
+        System.out.println("1. Sim");
+        System.out.println("2. Não");
 
+        choose = sc.next().charAt(0);
+
+        switch (choose) {
+            case '1' -> selecaoTemaJogar();
+            case '2' -> menu();
+            default -> System.out.println("Opção Inválida");
+        }
     }
 
     public static void sair() {
